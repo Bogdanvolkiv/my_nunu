@@ -1,0 +1,351 @@
+// Новый проект по айти Итоговвая контрольнай работа 
+cat > домашние_животные.txt
+cat > вьючные_животные.txt
+cat домашние_животные.txt вьючные_животные.txt > друзья_человека.txt
+mv друзья_человека.txt новые_друзья.txt
+mkdir питомник
+mv новые_друзья.txt питомник/
+-- Создание таблиц
+CREATE TABLE Животные (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    имя VARCHAR(50),
+    дата_рождения DATE
+);
+
+CREATE TABLE Домашние_животные (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    имя VARCHAR(50),
+    команда VARCHAR(100),
+    дата_рождения DATE
+) ENGINE=INNODB;
+
+CREATE TABLE Вьючные_животные (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    имя VARCHAR(50),
+    дата_рождения DATE,
+    тип_животного VARCHAR(50)
+) ENGINE=INNODB;
+
+-- Заполнение данных
+INSERT INTO Домашние_животные (имя, команда, дата_рождения) VALUES 
+('Шарик', 'Сидеть', '2022-04-10'),
+('Мурка', 'Лежать', '2021-07-14'),
+('Хомка', 'Принести', '2023-01-23');
+
+INSERT INTO Вьючные_животные (имя, дата_рождения, тип_животного) VALUES 
+('Барс', '2020-03-18', 'Лошадь'),
+('Рекс', '2019-09-12', 'Верблюд'),
+('Сэм', '2021-06-05', 'Осел');
+
+-- Удаление верблюдов
+DELETE FROM Вьючные_животные WHERE тип_животного = 'Верблюд';
+
+-- Объединение таблиц лошадей и ослов
+CREATE TABLE Лошади_и_ослы AS 
+SELECT * FROM Вьючные_животные WHERE тип_животного IN ('Лошадь', 'Осел');
+// Родительский класс "Животное"
+public abstract class Животное {
+    protected String имя;
+    protected String датаРождения;
+
+    public Животное(String имя, String датаРождения) {
+        this.имя = имя;
+        this.датаРождения = датаРождения;
+    }
+
+    public String getИмя() {
+        return имя;
+    }
+
+    public abstract void выполнитьКоманду();
+}
+
+// Класс для домашних животных
+public class ДомашнееЖивотное extends Животное {
+    private String команда;
+
+    public ДомашнееЖивотное(String имя, String датаРождения, String команда) {
+        super(имя, датаРождения);
+        this.команда = команда;
+    }
+
+    @Override
+    public void выполнитьКоманду() {
+        System.out.println(имя + " выполняет команду: " + команда);
+    }
+}
+
+// Класс для вьючных животных
+public class ВьючноеЖивотное extends Животное {
+    private String тип;
+
+    public ВьючноеЖивотное(String имя, String датаРождения, String тип) {
+        super(имя, датаРождения);
+        this.тип = тип;
+    }
+
+    @Override
+    public void выполнитьКоманду() {
+        System.out.println(имя + " является " + тип);
+    }
+}
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class Реестр {
+    private ArrayList<Животное> животные = new ArrayList<>();
+    private Scanner scanner = new Scanner(System.in);
+
+    public void меню() {
+        while (true) {
+            System.out.println("1. Добавить животное");
+            System.out.println("2. Посмотреть команды животных");
+            System.out.println("3. Обучить новому");
+            System.out.println("4. Выйти");
+            int выбор = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (выбор) {
+                case 1:
+                    добавитьЖивотное();
+                    break;
+                case 2:
+                    показатьКоманды();
+                    break;
+                case 3:
+                    обучитьНовому();
+                    break;
+                case 4:
+                    return;
+                default:
+                    System.out.println("Неверный ввод!");
+            }
+        }
+    }
+
+    private void добавитьЖивотное() {
+        System.out.println("Введите имя животного:");
+        String имя = scanner.nextLine();
+        System.out.println("Введите дату рождения (гггг-мм-дд):");
+        String датаРождения = scanner.nextLine();
+        System.out.println("Выберите тип: 1 - Домашнее, 2 - Вьючное:");
+        int тип = scanner.nextInt();
+        scanner.nextLine();
+
+        if (тип == 1) {
+            System.out.println("Введите команду для животного:");
+            String команда = scanner.nextLine();
+            животные.add(new ДомашнееЖивотное(имя, датаРождения, команда));
+        } else {
+            System.out.println("Введите тип вьючного животного:");
+            String вид = scanner.nextLine();
+            животные.add(new ВьючноеЖивотное(имя, датаРождения, вид));
+        }
+    }
+
+    private void показатьКоманды() {
+        for (Животное животное : животные) {
+            животное.выполнитьКоманду();
+        }
+    }
+
+    private void обучитьНовому() {
+        System.out.println("Введите имя животного для обучения:");
+        String имя = scanner.nextLine();
+        for (Животное животное : животные) {
+            if (животное.getИмя().equals(имя) && животное instanceof ДомашнееЖивотное) {
+                System.out.println("Введите новую команду:");
+                String новаяКоманда = scanner.nextLine();
+                ((ДомашнееЖивотное) животное).обучитьКоманде(новаяКоманда);
+            }
+        }
+    }
+}
+public class Счетчик implements AutoCloseable {
+    private int значение = 0;
+    private boolean isClosed = false;
+
+    public void add() {
+        if (isClosed) {
+            throw new IllegalStateException("Ресурс уже закрыт!");
+        }
+        значение++;
+    }
+
+    @Override
+    public void close() {
+        isClosed = true;
+        System.out.println("Ресурс закрыт. Итоговое значение: " + значение);
+    }
+
+    public static void main(String[] args) {
+        try (Счетчик счетчик = new Счетчик()) {
+            счетчик.add();
+            счетчик.add();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+import java.util.ArrayList;
+import java.util.Scanner;
+
+// Родительский класс "Животное" с инкапсуляцией
+abstract class Животное {
+    private String имя;
+    private String датаРождения;
+
+    public Животное(String имя, String датаРождения) {
+        this.имя = имя;
+        this.датаРождения = датаРождения;
+    }
+
+    public String getИмя() {
+        return имя;
+    }
+
+    public String getДатаРождения() {
+        return датаРождения;
+    }
+
+    public abstract void выполнитьКоманду();
+}
+
+// Класс "ДомашнееЖивотное" с инкапсуляцией
+class ДомашнееЖивотное extends Животное {
+    private String команда;
+
+    public ДомашнееЖивотное(String имя, String датаРождения, String команда) {
+        super(имя, датаРождения);
+        this.команда = команда;
+    }
+
+    @Override
+    public void выполнитьКоманду() {
+        System.out.println(getИмя() + " выполняет команду: " + команда);
+    }
+
+    public void обучитьКоманде(String новаяКоманда) {
+        this.команда = новаяКоманда;
+        System.out.println(getИмя() + " обучено новой команде: " + команда);
+    }
+}
+
+// Класс "ВьючноеЖивотное"
+class ВьючноеЖивотное extends Животное {
+    private String тип;
+
+    public ВьючноеЖивотное(String имя, String датаРождения, String тип) {
+        super(имя, датаРождения);
+        this.тип = тип;
+    }
+
+    @Override
+    public void выполнитьКоманду() {
+        System.out.println(getИмя() + " является " + тип);
+    }
+}
+
+// Класс Реестра, имитирующего работу питомника
+public class Реестр {
+    private ArrayList<Животное> животные = new ArrayList<>();
+    private Scanner scanner = new Scanner(System.in);
+
+    public void меню() {
+        while (true) {
+            System.out.println("1. Завести новое животное");
+            System.out.println("2. Посмотреть команды животных");
+            System.out.println("3. Обучить новое животное");
+            System.out.println("4. Выйти");
+            int выбор = scanner.nextInt();
+            scanner.nextLine(); // Очистка буфера
+
+            switch (выбор) {
+                case 1:
+                    завестиНовоеЖивотное();
+                    break;
+                case 2:
+                    показатьКоманды();
+                    break;
+                case 3:
+                    обучитьНовому();
+                    break;
+                case 4:
+                    return;
+                default:
+                    System.out.println("Неверный выбор!");
+            }
+        }
+    }
+
+    private void завестиНовоеЖивотное() {
+        System.out.println("Введите имя:");
+        String имя = scanner.nextLine();
+        System.out.println("Введите дату рождения (гггг-мм-дд):");
+        String датаРождения = scanner.nextLine();
+        System.out.println("1 - Домашнее, 2 - Вьючное:");
+        int тип = scanner.nextInt();
+        scanner.nextLine();
+
+        if (тип == 1) {
+            System.out.println("Введите команду:");
+            String команда = scanner.nextLine();
+            животные.add(new ДомашнееЖивотное(имя, датаРождения, команда));
+        } else {
+            System.out.println("Введите тип вьючного животного:");
+            String вид = scanner.nextLine();
+            животные.add(new ВьючноеЖивотное(имя, датаРождения, вид));
+        }
+    }
+
+    private void показатьКоманды() {
+        for (Животное животное : животные) {
+            животное.выполнитьКоманду();
+        }
+    }
+
+    private void обучитьНовому() {
+        System.out.println("Введите имя животного:");
+        String имя = scanner.nextLine();
+        for (Животное животное : животные) {
+            if (животное.getИмя().equals(имя) && животное instanceof ДомашнееЖивотное) {
+                System.out.println("Введите новую команду:");
+                String новаяКоманда = scanner.nextLine();
+                ((ДомашнееЖивотное) животное).обучитьКоманде(новаяКоманда);
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        Реестр реестр = new Реестр();
+        реестр.меню();
+    }
+}
+
+// Класс Счетчик с поддержкой try-with-resources
+class Счетчик implements AutoCloseable {
+    private int значение = 0;
+    private boolean isClosed = false;
+
+    public void add() {
+        if (isClosed) {
+            throw new IllegalStateException("Ресурс уже закрыт!");
+        }
+        значение++;
+    }
+
+    @Override
+    public void close() {
+        isClosed = true;
+        System.out.println("Ресурс закрыт. Итоговое значение: " + значение);
+    }
+
+    public static void main(String[] args) {
+        try (Счетчик счетчик = new Счетчик()) {
+            счетчик.add();
+            счетчик.add();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
