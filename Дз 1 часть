@@ -1,0 +1,192 @@
+// Задача 1. Преобразование строки в число
+class Answer {
+    public static int convertAndSum(String[] strings) {
+        int sum = 0;
+        for (String s : strings) {
+            try {
+                int number = Integer.parseInt(s);
+                sum += number;
+            } catch (NumberFormatException e) {
+                throw new NumberFormatException("Ошибка преобразования строки в число: " + s);
+            }
+        }
+        if (sum > 100) {
+            throw new ArithmeticException("Превышен лимит суммы");
+        }
+        return sum;
+    }
+}
+
+public class Printer {
+    public static void main(String[] args) {
+        // Первая попытка: корректный ввод
+        try {
+            String[] strings = {"10", "20", "70"};
+            System.out.println(Answer.convertAndSum(strings)); // Ожидаемый результат: 100
+        } catch (NumberFormatException e) {
+            System.out.println("Ошибка преобразования строки в число");
+        } catch (ArithmeticException e) {
+            System.out.println(e.getMessage());
+        }
+
+        // Вторая попытка: ввод с некорректным числом
+        try {
+            String[] invalidStrings = {"10", "20", "abc"};
+            System.out.println(Answer.convertAndSum(invalidStrings)); // Ожидаемый результат: исключение NumberFormatException
+        } catch (NumberFormatException e) {
+            System.out.println("Ошибка преобразования строки в число");
+        } catch (ArithmeticException e) {
+            System.out.println(e.getMessage());
+        }
+
+        // Третья попытка: сумма превышает лимит
+        try {
+            String[] overLimitStrings = {"50", "60"};
+            System.out.println(Answer.convertAndSum(overLimitStrings)); // Ожидаемый результат: исключение ArithmeticException
+        } catch (NumberFormatException e) {
+            System.out.println("Ошибка преобразования строки в число");
+        } catch (ArithmeticException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+}
+// Задача 2. Объединение массивов с проверкой длины и содержимого
+import java.util.Arrays;
+
+class Answer {
+    public static int[] mergeAndValidateArrays(int[] a, int[] b) {
+        if (a.length != b.length) {
+            throw new IllegalArgumentException("Длины массивов не равны");
+        }
+        int[] mergedArray = new int[a.length + b.length];
+        System.arraycopy(a, 0, mergedArray, 0, a.length);
+        System.arraycopy(b, 0, mergedArray, a.length, b.length);
+        for (int num : mergedArray) {
+            if (num < 0) {
+                throw new RuntimeException("Обнаружен отрицательный элемент");
+            }
+        }
+        return mergedArray;
+    }
+}
+
+public class Printer {
+    public static void main(String[] args) {
+        try {
+            int[] a = {1, 2, 3};
+            int[] b = {4, 5, 6};
+            int[] result = Answer.mergeAndValidateArrays(a, b);
+            System.out.println(Arrays.toString(result)); // Ожидаемый результат: [1, 2, 3, 4, 5, 6]
+        } catch (IllegalArgumentException e) {
+            System.out.println("Длины массивов не равны");
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
+        }
+
+        try {
+            int[] c = {1, 2};
+            int[] d = {3, 4, 5};
+            System.out.println(Arrays.toString(Answer.mergeAndValidateArrays(c, d))); // Ожидаемый результат: исключение IllegalArgumentException
+        } catch (IllegalArgumentException e) {
+            System.out.println("Длины массивов не равны");
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
+        }
+
+        try {
+            int[] e = {-1, 2, 3};
+            int[] f = {4, 5, 6};
+            System.out.println(Arrays.toString(Answer.mergeAndValidateArrays(e, f))); // Ожидаемый результат: исключение RuntimeException
+        } catch (IllegalArgumentException e) {
+            System.out.println("Длины массивов не равны");
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+}
+// Задача 3. Обработка исключений для разностных массивов
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+class Answer {
+    public int[] subArraysWithExceptionHandling(int[] a, int[] b, List<String> errors) {
+        if (a.length != b.length) {
+            errors.add("Массивы разной длины");
+            return new int[0];
+        }
+        int[] result = new int[a.length];
+        for (int i = 0; i < a.length; i++) {
+            result[i] = a[i] - b[i];
+            if (result[i] < 0) {
+                errors.add("Отрицательный результат разности в позиции " + i + ": " + result[i]);
+            }
+        }
+        return result;
+    }
+}
+
+public class Printer {
+    public static void main(String[] args) {
+        List<String> errors = new ArrayList<>();
+        int[] a = {10, 20, 30};
+        int[] b = {5, 15, 35};
+        int[] result = new Answer().subArraysWithExceptionHandling(a, b, errors);
+        System.out.println(Arrays.toString(result));
+
+        int[] c = {10, 20};
+        int[] d = {5, 15, 25};
+        result = new Answer().subArraysWithExceptionHandling(c, d, errors);
+        System.out.println(Arrays.toString(result));
+
+        if (!errors.isEmpty()) {
+            System.out.println("Обнаружены ошибки:");
+            for (String error : errors) {
+                System.out.println(error);
+            }
+        } else {
+            System.out.println("Ошибок не обнаружено.");
+        }
+    }
+}
+// Задача 4. Поиск и замена строк
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+class Answer {
+    public static String[] findAndReplace(String[] strings, String target, String replacement, List<String> errors) {
+        boolean found = false;
+        String[] result = new String[strings.length];
+        for (int i = 0; i < strings.length; i++) {
+            if (strings[i].equals(target)) {
+                result[i] = replacement;
+                found = true;
+            } else {
+                result[i] = strings[i];
+            }
+        }
+        if (!found) {
+            errors.add("Искомая строка \"" + target + "\" не найдена");
+        }
+        return result;
+    }
+}
+
+public class Printer {
+    public static void main(String[] args) {
+        List<String> errors = new ArrayList<>();
+        String[] strings = {"apple", "banana", "cherry", "date"};
+        String target = "banana";
+        String replacement = "orange";
+        String[] result = Answer.findAndReplace(strings, target, replacement, errors);
+        System.out.println("Результаты замены: " + Arrays.toString(result));
+        
+        if (!errors.isEmpty()) {
+            System.out.println("Обнаружены ошибки:");
+            for (String error : errors) {
+                System.out.println(error);
+            }
+        }
+    }
+}
