@@ -1,0 +1,145 @@
+// Задача 1: Проверка корректности даты
+class DateValidator {
+    public static String validateDate(String date) {
+        try {
+            // Проверка длины строки
+            if (date.length() != 10) {
+                return "Invalid date format. Please use YYYY-MM-DD.";
+            }
+
+            // Разделение строки на компоненты
+            String yearStr = date.substring(0, 4);
+            String monthStr = date.substring(5, 7);
+            String dayStr = date.substring(8, 10);
+
+            // Проверка формата разделителей
+            if (date.charAt(4) != '-' || date.charAt(7) != '-') {
+                return "Invalid date format. Please use YYYY-MM-DD.";
+            }
+
+            // Преобразование компонентов в числа
+            int year = Integer.parseInt(yearStr);
+            int month = Integer.parseInt(monthStr);
+            int day = Integer.parseInt(dayStr);
+
+            // Проверка диапазона года
+            if (year < 1 || year > 9999) {
+                return "Year out of range. Must be between 0001 and 9999.";
+            }
+
+            // Проверка диапазона месяца
+            if (month < 1 || month > 12) {
+                return "Month out of range. Must be between 01 and 12.";
+            }
+
+            // Проверка диапазона дня
+            int[] daysInMonth = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+            if (month == 2 && isLeapYear(year)) {
+                daysInMonth[1] = 29; // Февраль в високосный год
+            }
+            if (day < 1 || day > daysInMonth[month - 1]) {
+                return "Day out of range for the given month.";
+            }
+            return date; // Корректная дата
+
+        } catch (NumberFormatException e) {
+            return "Error parsing date components.";
+        } catch (Exception e) {
+            return "An error occurred while validating the date.";
+        }
+    }
+
+    private static boolean isLeapYear(int year) {
+        return (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+    }
+}
+
+public class Printer {
+    public static void main(String[] args) {
+        String date = args.length > 0 ? args[0] : "2024-09-01";
+        String result = DateValidator.validateDate(date);
+        System.out.println(result);
+    }
+}
+// Задача 2: Проверка строки на палиндром
+class PalindromeChecker {
+    public static boolean isPalindrome(String input) {
+        try {
+            String cleanedInput = input.replace(" ", "").toLowerCase();
+            int length = cleanedInput.length();
+            for (int i = 0; i < length / 2; i++) {
+                if (cleanedInput.charAt(i) != cleanedInput.charAt(length - i - 1)) {
+                    return false;
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            System.err.println("An error occurred while checking for palindrome.");
+            return false;
+        }
+    }
+}
+
+public class Printer {
+    public static void main(String[] args) {
+        String input = args.length > 0 ? args[0] : "A man a plan a canal Panama";
+        boolean result = PalindromeChecker.isPalindrome(input);
+        System.out.println("Is the input a palindrome? " + result);
+    }
+}
+// Задача 3: Сортировка массива строк
+import java.util.Arrays;
+
+class StringSorter {
+    public static String[] sortStrings(String[] strings) {
+        try {
+            if (strings == null) {
+                System.out.println("Input array is null. Returning an empty array.");
+                return new String[0];
+            }
+            Arrays.sort(strings);
+            return strings;
+        } catch (Exception e) {
+            System.out.println("An error occurred during sorting.");
+            return new String[0];
+        }
+    }
+}
+
+public class Printer {
+    public static void main(String[] args) {
+        String[] strings = args.length > 0 ? args[0].split(",") : new String[]{"banana", "apple", "cherry"};
+        String[] result = StringSorter.sortStrings(strings);
+        System.out.println(Arrays.toString(result));
+    }
+}
+// Задача 4: Нахождение среднеарифметического числа
+import java.util.Arrays;
+
+class Statistics {
+    public static double findAverage(int[] array) {
+        try {
+            if (array == null || array.length == 0) {
+                System.out.println("Array is empty or null. Cannot compute average.");
+                return Double.NaN;
+            }
+            double sum = 0;
+            for (int num : array) {
+                sum += num;
+            }
+            return sum / array.length;
+        } catch (Exception e) {
+            System.out.println("An error occurred while computing the average.");
+            return Double.NaN;
+        }
+    }
+}
+
+public class Printer {
+    public static void main(String[] args) {
+        int[] array = args.length > 0 ? Arrays.stream(args[0].split(" ")).mapToInt(Integer::parseInt).toArray()
+                                       : new int[]{10, 20, 30, 40, 50};
+        double average = Statistics.findAverage(array);
+        System.out.println(average);
+    }
+}
