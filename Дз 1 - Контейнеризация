@@ -1,0 +1,14 @@
+# Создаем новое пространство имен для процессов
+unshare --pid --fork bash
+ps aux
+# Создаем новое пространство имен для сети
+unshare --net bash
+ip a
+# Создаем новое пространство имен для имени хоста
+unshare --uts bash
+# Пример полной изоляции в нескольких пространствах имен:
+unshare --pid --fork bash   # Изоляция PID
+unshare --net bash          # Изоляция сети
+unshare --mount bash        # Изоляция монтирования
+unshare --user bash         # Изоляция пользователей
+unshare --uts bash          # Изоляция имени хоста
