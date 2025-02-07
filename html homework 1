@@ -1,0 +1,60 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная</title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="index.html">Главная</a></li>
+            <li><a href="catalog/catalog.html">Каталог</a></li>
+            <li><a href="#">Контакты</a></li>
+        </ul>
+    </nav>
+    <h1>Главная страница</h1>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+    <h2>Добро пожаловать на сайт</h2>
+    <p>Lorem ipsum dolor sit amet.</p>
+    <p>Consectetur adipiscing elit.</p>
+    <p>Sed do eiusmod tempor incididunt.</p>
+</body>
+</html>
+
+<!-- catalog/catalog.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Каталог</title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="../index.html">Главная</a></li>
+            <li><a href="catalog.html">Каталог</a></li>
+            <li><a href="#">Контакты</a></li>
+        </ul>
+    </nav>
+    <h1>Каталог</h1>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. (150 слов)</p>
+    <div>
+        <img src="../img/product1.jpg" alt="Товар 1">
+        <h3>Товар 1</h3>
+        <p>Описание товара 1.</p>
+    </div>
+    <div>
+        <img src="../img/product2.jpg" alt="Товар 2">
+        <h3>Товар 2</h3>
+        <p>Описание товара 2.</p>
+    </div>
+    <div>
+        <img src="../img/product3.jpg" alt="Товар 3">
+        <h3>Товар 3</h3>
+        <p>Описание товара 3.</p>
+    </div>
+</body>
+</html>
