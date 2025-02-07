@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная</title>
+    <style>
+        /* Сброс стилей для ссылок */
+        a {
+            text-decoration: none;
+        }
+
+        /* Стили для ссылок в меню */
+        .menu-link {
+            color: cornflowerblue;
+            font-size: 16px;
+            line-height: 20px;
+        }
+
+        /* Стили для заголовков h1 */
+        .main-title {
+            color: #222222;
+            font-size: 28px;
+            line-height: 36px;
+            font-weight: bold;
+        }
+
+        /* Стили для заголовков h2 */
+        .section-title {
+            color: coral;
+            font-style: normal;
+            font-weight: 700;
+            font-size: 36px;
+            line-height: 80px;
+        }
+
+        /* Стили для параграфов */
+        .text {
+            font-style: normal;
+            font-weight: 300;
+            font-size: 18px;
+            line-height: 30px;
+            color: #7D7987;
+        }
+
+        /* Разделение экрана на 2 части */
+        body {
+            display: flex;
+        }
+
+        nav {
+            width: 200px;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+
+        main {
+            flex-grow: 1;
+            padding: 20px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <ul>
+            <li><a href="index.html" class="menu-link">Главная</a></li>
+            <li><a href="about.html" class="menu-link">О нас</a></li>
+            <li><a href="contacts.html" class="menu-link">Контакты</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <h1 class="main-title">Добро пожаловать!</h1>
+        <h2 class="section-title">Наши услуги</h2>
+        <p class="text">Мы предлагаем широкий спектр услуг для вас.</p>
+    </main>
+
+</body>
+</html>
