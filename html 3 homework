@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seo & Digital Marketing Landing Page</title>
+    <style>
+        /* Обнуление стилей */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Общие стили */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        /* Шапка сайта */
+        header {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        header h1 {
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+
+        header p {
+            font-size: 20px;
+            margin-bottom: 30px;
+        }
+
+        header button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        header button:hover {
+            background-color: #45a049;
+        }
+
+        /* Основной контент */
+        section {
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        section h2 {
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        section p {
+            font-size: 18px;
+            margin-bottom: 40px;
+            color: #777;
+        }
+
+        section img {
+            width: 100%;
+            max-width: 800px;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        /* Услуги */
+        .services {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 50px;
+        }
+
+        .service {
+            background-color: #f4f4f4;
+            padding: 20px;
+            width: 30%;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .service h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .service p {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+        /* Подвал сайта */
+        footer {
+            background-color: #222;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        footer p {
+            font-size: 14px;
+        }
+
+        footer a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header (Шапка сайта) -->
+    <header>
+        <h1>Добро пожаловать на Seo & Digital Marketing</h1>
+        <p>Оптимизация для поисковых систем и маркетинг для вашего бизнеса.</p>
+        <button>Подробнее</button>
+    </header>
+
+    <!-- Main Section (Основной контент) -->
+    <section>
+        <h2>Наши услуги</h2>
+        <p>Мы предлагаем широкий спектр услуг в области SEO, контент-маркетинга и digital marketing.</p>
+        <img src="https://via.placeholder.com/800x400" alt="Услуги SEO">
+
+        <!-- Блок с услугами -->
+        <div class="services">
+            <div class="service">
+                <h3>SEO Оптимизация</h3>
+                <p>Улучшение позиций вашего сайта в поисковых системах для привлечения большего трафика.</p>
+            </div>
+            <div class="service">
+                <h3>Контент-Маркетинг</h3>
+                <p>Создание качественного контента, который поможет повысить вовлеченность аудитории.</p>
+            </div>
+            <div class="service">
+                <h3>Цифровой Маркетинг</h3>
+                <p>Комплексный подход к маркетингу, включая рекламу в социальных сетях и PPC-кампании.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer (Подвал сайта) -->
+    <footer>
+        <p>&copy; 2025 Seo & Digital Marketing. Все права защищены. <a href="#">Политика конфиденциальности</a></p>
+    </footer>
+
+</body>
+</html>
