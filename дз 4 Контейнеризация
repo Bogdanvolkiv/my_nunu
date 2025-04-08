@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# === 1. Создание рабочей папки ===
+mkdir -p docker-python-app
+cd docker-python-app
+
+# === 2. Создание Python-приложения ===
+cat <<EOF > app.py
+print("Привет из Docker-контейнера!")
+print("Это простое Python-приложение :)")
+EOF
+
+# === 3. Создание Dockerfile ===
+cat <<EOF > Dockerfile
+# Используем базовый Python-образ
+FROM python:3.10-slim
+
+# Устанавливаем рабочую директорию внутри контейнера
+WORKDIR /app
+
+# Копируем приложение в контейнер
+COPY app.py .
+
+# Команда запуска при старте контейнера
+CMD ["python", "app.py"]
+EOF
+
+# === 4. Сборка Docker-образа ===
+docker build -t my-python-app .
+
+# === 5. Запуск контейнера ===
+docker run --rm my-python-app
