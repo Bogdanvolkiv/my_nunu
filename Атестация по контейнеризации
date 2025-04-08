@@ -1,0 +1,100 @@
+#!/bin/bash
+
+echo "🔧 Создаём проект контейнеризации..."
+
+# === 1. Создаём структуру директорий ===
+mkdir -p project/{dev,lab,app}
+cd project
+
+# === 2. Создаём Python-приложение ===
+cat <<EOF > app/app.py
+from flask import Flask
+import os
+import psycopg2
+
+app = Flask(__name__)
+
+@app.route("/")
+def hello():
+    db_host = os.environ.get("DB_HOST", "localhost")
+    return f"Привет из окружения! DB_HOST = {db_host}"
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
+EOF
+
+# === 3. Dockerfile для приложения ===
+cat <<EOF > app/Dockerfile
+FROM python:3.10-slim
+
+WORKDIR /app
+COPY app.py .
+
+RUN pip install flask psycopg2-binary
+
+CMD ["python", "app.py"]
+EOF
+
+# === 4. docker-compose.yml для окружения DEV ===
+cat <<EOF > dev/docker-compose.yml
+version: '3.8'
+
+services:
+  web:
+    build: ../app
+    ports:
+      - "5000:5000"
+    environment:
+      - DB_HOST=db
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=mydb
+
+volumes:
+  pgdata:
+EOF
+
+# === 5. docker-compose.yml для окружения LAB ===
+cat <<EOF > lab/docker-compose.yml
+version: '3.8'
+
+services:
+  web:
+    build: ../app
+    ports:
+      - "5050:5000"
+    environment:
+      - DB_HOST=db
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=mydb
+
+volumes:
+  pgdata:
+EOF
+
+# === 6. Сборка и запуск окружений ===
+echo "🚀 Запускаем окружения dev и lab..."
+
+cd dev && docker-compose up -d
+cd ../lab && docker-compose up -d
+
+# === 7. Проверка контейнеров ===
+echo "📦 Активные контейнеры:"
+docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+
+echo "✅ Всё готово. Приложения работают на:"
+echo " - http://localhost:5000 (dev)"
+echo " - http://localhost:5050 (lab)"
