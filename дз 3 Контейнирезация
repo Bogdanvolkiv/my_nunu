@@ -1,0 +1,48 @@
+#!/bin/bash
+
+# === 1. Установка Docker (если ещё не установлен) ===
+sudo apt update
+sudo apt install -y docker.io
+sudo systemctl enable docker
+sudo systemctl start docker
+
+# === 2. Определяем hostname хоста ===
+HOST_NAME=$(hostname)
+echo "Hostname системы: $HOST_NAME"
+
+# === 3. Запускаем контейнер PostgreSQL с этим hostname ===
+docker run -d \
+  --name pg_container \
+  --hostname $HOST_NAME \
+  -e POSTGRES_USER=admin \
+  -e POSTGRES_PASSWORD=adminpass \
+  -e POSTGRES_DB=mydb \
+  -p 5432:5432 \
+  postgres
+
+# === 4. Немного подождём, чтобы БД успела запуститься ===
+sleep 5
+
+# === 5. Вводим данные в базу через psql ===
+docker exec -i pg_container psql -U admin -d mydb <<EOF
+CREATE TABLE students (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  grade INTEGER
+);
+INSERT INTO students (name, grade) VALUES
+  ('Alice', 85),
+  ('Bob', 90),
+  ('Charlie', 78);
+EOF
+
+# === 6. Запускаем phpPgAdmin ===
+docker run -d \
+  --name phppgadmin \
+  -e 'PHPPGADMIN_SERVER_HOST=pg_container' \
+  --link pg_container:pg_container \
+  -p 8080:80 \
+  bitnami/phppgadmin
+
+echo "Контейнеры запущены:"
+docker ps
