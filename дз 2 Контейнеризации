@@ -1,0 +1,76 @@
+#!/bin/bash
+
+# === Обновление системы и установка LXC ===
+sudo apt update && sudo apt install -y lxc bridge-utils
+
+# === Создание контейнера с Ubuntu ===
+sudo lxc-create -n ubuntu-container -t download -- -d ubuntu -r focal -a amd64
+
+# === Настройка лимита памяти 256MB ===
+echo "lxc.cgroup.memory.limit_in_bytes = 256M" | sudo tee -a /var/lib/lxc/ubuntu-container/config
+
+# === Включение автозапуска контейнера ===
+echo "lxc.start.auto = 1" | sudo tee -a /var/lib/lxc/ubuntu-container/config
+echo "lxc.start.delay = 5" | sudo tee -a /var/lib/lxc/ubuntu-container/config
+sudo mkdir -p /etc/lxc/auto
+sudo ln -s /var/lib/lxc/ubuntu-container /etc/lxc/auto
+
+# === Запуск контейнера с логированием ===
+sudo lxc-start -n ubuntu-container -d -o /var/log/lxc-ubuntu.log -l DEBUG
+
+# === Проверка лимита памяти ===
+cat /sys/fs/cgroup/memory/lxc/ubuntu-container/memory.limit_in_bytes
+
+# === Создание 2 контейнеров для маршрутизации ===
+sudo lxc-create -n container1 -t download -- -d ubuntu -r focal -a amd64
+sudo lxc-create -n container2 -t download -- -d ubuntu -r focal -a amd64
+
+# === Настройка сетей в конфигурации контейнеров ===
+echo "
+lxc.net.0.type = veth
+lxc.net.0.link = br12
+lxc.net.0.flags = up
+lxc.net.0.ipv4.address = 10.0.12.2/24
+" | sudo tee -a /var/lib/lxc/container1/config
+
+echo "
+lxc.net.0.type = veth
+lxc.net.0.link = br13
+lxc.net.0.flags = up
+lxc.net.0.ipv4.address = 10.0.13.2/24
+" | sudo tee -a /var/lib/lxc/container2/config
+
+# === Создание сетевых мостов ===
+sudo brctl addbr br12
+sudo brctl addbr br13
+sudo ip link set br12 up
+sudo ip link set br13 up
+
+# === Назначение IP хосту (гейтвею) ===
+sudo ip addr add 10.0.12.1/24 dev br12
+sudo ip addr add 10.0.13.1/24 dev br13
+
+# === Запуск контейнеров ===
+sudo lxc-start -n container1 -d
+sudo lxc-start -n container2 -d
+sleep 5
+
+# === Включение IP маршрутизации на хосте ===
+sudo sysctl -w net.ipv4.ip_forward=1
+
+# === Добавление маршрутов в контейнерах ===
+sudo lxc-attach -n container1 -- ip route add default via 10.0.12.1
+sudo lxc-attach -n container2 -- ip route add default via 10.0.13.1
+
+# === Проверка связи между контейнерами ===
+echo "Проверка ping из container1 в container2:"
+sudo lxc-attach -n container1 -- ping -c 4 10.0.13.2
+
+# === Вывод состояния контейнеров ===
+sudo lxc-ls --fancy
+
+# === Анализ логов ===
+echo "------ LOG /var/log/lxc-ubuntu.log ------"
+sudo tail /var/log/lxc-ubuntu.log
+chmod +x lxc_setup.sh
+sudo ./lxc_setup.sh
