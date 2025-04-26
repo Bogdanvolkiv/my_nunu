@@ -1,0 +1,37 @@
+-- Задание 1: Анализ прибыли по категориям продуктов
+SELECT
+  c.CategoryName,
+  SUM(p.Price * od.Quantity) AS TotalProfit
+FROM
+  OrderDetails od
+JOIN
+  Orders o ON od.OrderID = o.OrderID
+JOIN
+  Products p ON od.ProductID = p.ProductID
+JOIN
+  Categories c ON p.CategoryID = c.CategoryID
+GROUP BY
+  c.CategoryName;
+
+-- Задание 2: Количество заказов по регионам
+-- (ПРАВКА: В SQLite нет функций MONTH() и YEAR() как в MySQL, поэтому нужно через STRFTIME)
+SELECT
+  c.Country AS Country,
+  STRFTIME('%m', o.OrderDate) AS Month,
+  STRFTIME('%Y', o.OrderDate) AS Year,
+  COUNT(o.OrderID) AS OrderCount
+FROM
+  Orders o
+JOIN
+  Customers c ON o.CustomerID = c.CustomerID
+GROUP BY
+  c.Country, Month, Year;
+
+-- Задание 3: Средняя продолжительность кредитного срока для клиентов
+SELECT
+  education AS Education,
+  AVG(credit_term) AS AverageCreditTerm
+FROM
+  Clusters
+GROUP BY
+  education;
