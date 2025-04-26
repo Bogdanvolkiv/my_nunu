@@ -1,0 +1,71 @@
+-- Задание 1: Ранжирование продуктов по средней цене
+WITH ProductAvgPrice AS (
+  SELECT
+    p.CategoryID,
+    p.ProductID,
+    p.ProductName,
+    AVG(p.Price) AS AvgPrice
+  FROM
+    Products p
+  JOIN
+    OrderDetails od ON p.ProductID = od.ProductID
+  GROUP BY
+    p.CategoryID, p.ProductID, p.ProductName
+)
+SELECT
+  CategoryID,
+  ProductID,
+  ProductName,
+  AvgPrice,
+  RANK() OVER (PARTITION BY CategoryID ORDER BY AvgPrice DESC) AS ProductRank
+FROM
+  ProductAvgPrice;
+
+-- Задание 2: Средняя и максимальная сумма кредита по месяцам
+WITH AvgCredit AS (
+  SELECT
+    month,
+    cluster,
+    AVG(credit_amount) AS AvgCreditAmount
+  FROM
+    Clusters
+  GROUP BY
+    month, cluster
+),
+MaxCredit AS (
+  SELECT
+    month,
+    MAX(credit_amount) AS MaxCreditAmount
+  FROM
+    Clusters
+  GROUP BY
+    month
+)
+SELECT
+  a.month,
+  a.cluster,
+  a.AvgCreditAmount,
+  m.MaxCreditAmount
+FROM
+  AvgCredit a
+JOIN
+  MaxCredit m ON a.month = m.month;
+
+-- Задание 3: Разница в суммах кредита по месяцам
+WITH CreditWithPrevious AS (
+  SELECT
+    month,
+    cluster,
+    credit_amount,
+    LAG(credit_amount) OVER (PARTITION BY cluster ORDER BY month) AS PreviousCreditAmount
+  FROM
+    Clusters
+)
+SELECT
+  month,
+  cluster,
+  credit_amount,
+  PreviousCreditAmount,
+  COALESCE(credit_amount - PreviousCreditAmount, 0) AS Difference
+FROM
+  CreditWithPrevious;
