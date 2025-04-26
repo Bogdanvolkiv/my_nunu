@@ -1,0 +1,40 @@
+-- Задание 1: Уникальные страны клиентов
+SELECT COUNT(DISTINCT Country) AS unique_countries
+FROM Customers;
+
+-- Задание 2: Клиенты из Бразилии
+SELECT COUNT(*) AS brazil_customers
+FROM Customers
+WHERE Country = 'Brazil';
+
+-- Задание 3: Средняя цена и количество товаров в категории 5
+SELECT
+  AVG(Price) AS avg_price,
+  COUNT(*) AS total_products
+FROM Products
+WHERE CategoryID = 5;
+
+-- Задание 4: Средний возраст сотрудников на 2024-01-01
+SELECT AVG((julianday('2024-01-01') - julianday(BirthDate)) / 365) AS AverageAge
+FROM Employees;
+
+-- Задание 5: Заказы в период 30 дней до 2024-02-15
+SELECT *
+FROM Orders
+WHERE OrderDate BETWEEN '2024-01-16' AND '2024-02-15'
+ORDER BY OrderDate;
+
+-- Задание 6: Количество заказов за ноябрь 2023 года
+SELECT COUNT(*) AS november_orders
+FROM Orders
+WHERE OrderDate >= '2023-11-01' AND OrderDate <= '2023-11-30';
+
+-- Задание 7: Количество заказов за январь 2024 года (LIKE)
+SELECT COUNT(*) AS january_orders
+FROM Orders
+WHERE OrderDate LIKE '2024-01%';
+
+-- Задание 8: Количество заказов за 2024 год
+SELECT COUNT(*) AS orders_2024
+FROM Orders
+WHERE STRFTIME('%Y', OrderDate) = '2024';
