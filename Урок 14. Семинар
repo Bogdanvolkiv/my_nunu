@@ -1,0 +1,98 @@
+#!/bin/bash
+
+# -----------------------------------------------
+# 1. Установка Docker на виртуальную машину или VDS
+# -----------------------------------------------
+
+# Обновляем систему и устанавливаем необходимые пакеты
+sudo apt update
+sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
+
+# Добавляем официальный репозиторий Docker
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+
+# Обновляем индексы пакетов и устанавливаем Docker
+sudo apt update
+sudo apt install -y docker-ce docker-ce-cli containerd.io
+
+# Проверка установки Docker
+sudo docker --version
+
+# -----------------------------------------------
+# 2. Установка Docker Compose
+# -----------------------------------------------
+
+# Скачиваем и устанавливаем Docker Compose
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+# Проверка установки Docker Compose
+docker-compose --version
+
+# -----------------------------------------------
+# 3. Создание конфигурационного файла docker-compose.yml
+# -----------------------------------------------
+
+# Создаем файл docker-compose.yml в текущей директории
+cat <<EOF > docker-compose.yml
+version: '3.7'
+
+services:
+  db:
+    image: mariadb:10.8
+    container_name: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: example_password
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - my_network
+  
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: example_password
+    ports:
+      - "8080:80"
+    networks:
+      - my_network
+
+networks:
+  my_network:
+    driver: bridge
+
+volumes:
+  mariadb_data:
+EOF
+
+# -----------------------------------------------
+# 4. Запуск контейнеров через Docker Compose
+# -----------------------------------------------
+
+# Запускаем контейнеры в фоновом режиме
+sudo docker-compose up -d
+
+# -----------------------------------------------
+# 5. Проверка работы контейнеров
+# -----------------------------------------------
+
+# Проверяем, что контейнеры запущены
+sudo docker ps
+
+# -----------------------------------------------
+# 6. Доступ к phpMyAdmin
+# -----------------------------------------------
+
+# Теперь можно перейти в браузере по адресу http://<IP_вашей_машины>:8080
+# Войти в phpMyAdmin с логином 'root' и паролем 'example_password'
+
+# -----------------------------------------------
+# 7. (Необязательно) Сохранение контейнеров в фоне
+# -----------------------------------------------
+
+# Чтобы контейнеры запускались автоматически при старте системы
+sudo systemctl enable docker
