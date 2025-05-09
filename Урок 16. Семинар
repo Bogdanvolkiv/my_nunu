@@ -1,0 +1,57 @@
+#!/bin/bash
+
+# ================================
+# Админ-Toolkit: Bash-Автоматизация
+# ================================
+
+# Приветствие
+echo "Здравствуйте, $USER!"
+echo "Сегодня: $(date)"
+echo "-----------------------------------"
+
+# 1. Резервное копирование файла
+SOURCE="$HOME/test.txt"
+BACKUP="$HOME/test.txt.bak"
+
+if [ -f "$SOURCE" ]; then
+    cp "$SOURCE" "$BACKUP"
+    echo "[✔] Резервная копия создана: $BACKUP"
+else
+    echo "[!] Файл $SOURCE не найден, пропускаем резервное копирование."
+fi
+
+# 2. Очистка временных файлов в /tmp
+TMP_DELETED=$(find /tmp -type f -name '*.tmp' -delete -print | wc -l)
+echo "[✔] Удалено временных файлов: $TMP_DELETED"
+
+# 3. Мониторинг использования диска
+USAGE=$(df -h / | grep '/' | awk '{ print $5 }' | sed 's/%//')
+if [ "$USAGE" -gt 80 ]; then
+    echo "[⚠] Диск почти заполнен: ${USAGE}%"
+else
+    echo "[✔] Использование диска в норме: ${USAGE}%"
+fi
+
+# 4. Проверка доступности сайта
+TARGET="google.com"
+ping -c 1 $TARGET &> /dev/null
+if [ $? -eq 0 ]; then
+    echo "[✔] Сайт $TARGET доступен"
+else
+    echo "[!] Сайт $TARGET недоступен"
+fi
+
+# 5. Обновление системы (нужны root-права)
+echo "Обновление системы..."
+sudo apt update && sudo apt upgrade -y
+sudo apt autoremove -y && sudo apt clean
+echo "[✔] Система обновлена"
+
+# 6. Архивация домашней директории
+DATE=$(date +%Y%m%d)
+BACKUP_FILE="/tmp/home_${USER}_$DATE.tar.gz"
+tar -czf "$BACKUP_FILE" "/home/$USER"
+echo "[✔] Архив домашней директории создан: $BACKUP_FILE"
+
+echo "-----------------------------------"
+echo "Готово! Все задачи завершены."
