@@ -1,0 +1,51 @@
+#!/bin/bash
+
+# -----------------------------------------------
+# 1. Подключение репозитория и установка пакета (Docker)
+# -----------------------------------------------
+
+sudo apt update
+sudo apt install -y ca-certificates curl gnupg lsb-release
+
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
+  sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+  https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt update
+sudo apt install -y docker-ce docker-ce-cli containerd.io
+
+# -----------------------------------------------
+# 2. Установка и удаление deb-пакета с dpkg (пример: htop)
+# -----------------------------------------------
+
+wget http://archive.ubuntu.com/ubuntu/pool/universe/h/htop/htop_3.0.5-7_amd64.deb
+sudo dpkg -i htop_3.0.5-7_amd64.deb
+sudo dpkg -r htop
+
+# -----------------------------------------------
+# 3. Установка и удаление snap-пакета
+# -----------------------------------------------
+
+sudo snap install hello-world
+sudo snap remove hello-world
+
+# -----------------------------------------------
+# 4. Cron-задача: каждые 3 минуты — создание директории и запись в файл
+# -----------------------------------------------
+
+mkdir -p ~/cron_folder
+(crontab -l 2>/dev/null; echo "*/3 * * * * mkdir -p ~/cron_folder && echo \"Cron ran at \$(date)\" >> ~/cron_folder/log.txt") | crontab -
+
+# -----------------------------------------------
+# 5. (*) Установка пакета из PPA и удаление PPA (пример: neofetch)
+# -----------------------------------------------
+
+sudo add-apt-repository ppa:dawidd0811/neofetch -y
+sudo apt update
+sudo apt install -y neofetch
+sudo add-apt-repository --remove pp
