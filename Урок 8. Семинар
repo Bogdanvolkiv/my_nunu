@@ -1,0 +1,46 @@
+# -----------------------------------------------
+# 1. Подключение репозитория и установка NGINX
+# -----------------------------------------------
+
+# Обновим список пакетов
+sudo apt update
+
+# Добавим репозиторий NGINX (официальный способ)
+sudo apt install curl gnupg2 ca-certificates lsb-release
+
+curl https://nginx.org/keys/nginx_signing.key | gpg --dearmor | sudo tee /usr/share/keyrings/nginx.gpg >/dev/null
+
+echo "deb [signed-by=/usr/share/keyrings/nginx.gpg] http://nginx.org/packages/ubuntu $(lsb_release -cs) nginx" | \
+  sudo tee /etc/apt/sources.list.d/nginx.list
+
+# Обновим и установим nginx
+sudo apt update
+sudo apt install nginx
+
+# -----------------------------------------------
+# 2. Удаление nginx через dpkg
+# -----------------------------------------------
+
+# Удалим nginx через dpkg (предварительно найдём точное имя пакета)
+dpkg -l | grep nginx       # (команда для справки, в отчёт можно не включать)
+sudo dpkg -r nginx         # если основной пакет называется "nginx"
+
+# -----------------------------------------------
+# 3. Установка пакета через snap
+# -----------------------------------------------
+
+# Пример: установка пакета "htop"
+sudo snap install htop
+
+# -----------------------------------------------
+# 4. Создание файла и настройка автоматического бэкапа через cron (доп. задание)
+# -----------------------------------------------
+
+# Создание файла
+nano ~/test.txt
+
+# Создание cron-задачи для бэкапа каждые 10 минут
+crontab -e
+
+# Добавить строку в конец файла (внутри редактора crontab):
+# */10 * * * * cp ~/test.txt ~/test.txt.bak
