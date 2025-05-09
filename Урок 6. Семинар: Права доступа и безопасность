@@ -1,0 +1,80 @@
+# -----------------------------------------------
+# 1. Создание файлов и установка прав доступа
+# -----------------------------------------------
+
+touch file1.txt file2.txt
+
+# Установка прав (символьный и числовой вид)
+chmod 664 file1.txt         # rw-rw-r--
+chmod u=rw,g=rw,o=r file1.txt
+
+chmod 600 file2.txt         # rw-------
+chmod u=rw,go= file2.txt
+
+# -----------------------------------------------
+# 2. Назначение владельца и группы директории
+# -----------------------------------------------
+
+mkdir mydir
+sudo chown newowner:newgroup mydir
+
+# -----------------------------------------------
+# 3. Управление пользователями
+# -----------------------------------------------
+
+# Создание пользователей
+sudo useradd -m user1
+sudo adduser user2          # интерактивная команда
+
+# Удаление пользователя
+sudo userdel -r user1
+
+# -----------------------------------------------
+# 4. Управление группами
+# -----------------------------------------------
+
+# Создание групп
+sudo groupadd testgroup
+sudo addgroup testgroup2
+
+# Смена основной группы
+sudo usermod -g testgroup user2
+
+# Добавление пользователя в группу без смены основной
+sudo usermod -aG testgroup2 user2
+
+# -----------------------------------------------
+# 5. Создание суперпользователя без пароля в sudo
+# -----------------------------------------------
+
+sudo useradd -m adminuser
+sudo usermod -aG sudo adminuser
+echo "adminuser ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/adminuser
+
+# -----------------------------------------------
+# 6. Дополнительные задания
+# -----------------------------------------------
+
+# 6.1 Выдача ограниченных sudo-прав
+echo "user2 ALL=(ALL) NOPASSWD:/bin/systemctl restart nginx" | sudo tee /etc/sudoers.d/user2
+
+# 6.2 Группа developer и общая рабочая директория
+sudo groupadd developer
+sudo useradd -m -G developer dev1
+sudo useradd -m -G developer dev2
+
+sudo mkdir /shared
+sudo chown :developer /shared
+sudo chmod 2775 /shared     # SGID-бит для совместной работы
+
+# 6.3 Поддиректория с ограничением на удаление
+sudo mkdir /shared/exchange
+sudo chown :developer /shared/exchange
+sudo chmod 1770 /shared/exchange   # sticky-bit — только владелец может удалять свои файлы
+
+# 6.4 Директория с «невидимыми» файлами
+sudo mkdir /secret
+sudo chown :developer /secret
+sudo chmod 710 /secret              # список ls недоступен
+
+touch /secret/hidden1.txt /secret/hidden2.txt
